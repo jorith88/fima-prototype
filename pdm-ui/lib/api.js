@@ -1,4 +1,5 @@
 let FIMA = require('./fima.js');
+const Console = require('console').Console;
 
 /**
  * PDM API endpoint implementations.
@@ -44,7 +45,7 @@ let API = module.exports = function(app, wsApp, web3, contractsRegistry) {
     // API: events websocket
     wsApp.ws('/api/v1/identity/:identityId/events', function(ws, req) {
         var identityId = req.params.identityId + '';
-        console.log('New webservice connection for identity: ' + identityId);
+        Console.log('New webservice connection for identity: ' + identityId);
         self.wsByIdentity[identityId] = ws;
     });
 
@@ -68,19 +69,15 @@ let API = module.exports = function(app, wsApp, web3, contractsRegistry) {
         // TODO: create subsnap
 
         // Put the authorization on the blockchain
-        var identityAddress = "0x0067af5b87da32b14ff58af203cf3d4684319c5c";
+        var identityAddress = '0x0067af5b87da32b14ff58af203cf3d4684319c5c';
         var fima = new FIMA(identityAddress, web3);
         var authContract = fima.getAuthorizationTrackerContract(contractsRegistry.authorizationTracker.address);
 
         var granter = fima.numberToBytes32(identityId);
         var grantee = fima.numberToBytes32(request.askIdentity.identityId);
-        var subsnapID = "0xabcd1234";
+        var subsnapID = '0xabcd1234';
 
         authContract.authorize(granter, grantee, subsnapID);
-
-        // // Notify the asker
-        // var request = stubs.getRequestById(requestId);
-        // self.sendWebsocketMessage(request.askIdentity.identityId, 'AuthorizationCreated');
 
         res.json(response);
     });
@@ -110,7 +107,7 @@ API.prototype.sendWebsocketMessage = function(identityId, message) {
     identityId += '';
 
     if (identityId in this.wsByIdentity) {
-        console.log('Notifying identity ' + identityId + ' via WS');
+        Console.log('Notifying identity ' + identityId + ' via WS');
         this.wsByIdentity[identityId].send(message);
     }
 };

@@ -1,4 +1,5 @@
-const fs = require("fs");
+const fs = require('fs');
+const Console = require('Console').Console;
 
 /**
  * FIMA PDM library.
@@ -27,7 +28,7 @@ FIMA.prototype.getAuthorizationTrackerContract = function(addr) {
 };
 
 FIMA.prototype.getContract = function(addr, ABIPath) {
-    console.log('Obtaining contract for addr: ' + addr + '; ABI: ' + ABIPath);
+    Console.log('Obtaining contract for addr: ' + addr + '; ABI: ' + ABIPath);
 
     let abi = fs.readFileSync(ABIPath, 'utf8');
     let abiArray = JSON.parse(abi);
@@ -43,7 +44,7 @@ FIMA.prototype.deployContract = function(bytecodePath, ABIPath) {
     let Contract = this.web3.eth.contract(JSON.parse(abi));
 
     var contractInstance = Contract.new({data: bytecode, gas: gasEstimate, from: this.accountAddress});
-    console.log('Deployed new contract with hash: ' + contractInstance.transactionHash);
+    Console.log('Deployed new contract with hash: ' + contractInstance.transactionHash);
     return contractInstance;
 };
 
@@ -51,7 +52,7 @@ FIMA.prototype.numberToBytes32 = function(number) {
     let numberAsHex = Number(number).toString(16);
     let numberOfZeros = 64 - numberAsHex.length;
 
-    return "0x" + "0".repeat(numberOfZeros) + numberAsHex;
+    return '0x' + '0'.repeat(numberOfZeros) + numberAsHex;
 };
 
 FIMA.prototype.bytes32ToNumber = function(bytes) {
