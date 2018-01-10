@@ -5,9 +5,9 @@ const express = require('express');
 
 // Configuration
 var config = {
-    blockchainFIMAAccount: "0x00cEB73c4577084C934eA579e7A8271778449008",
+    blockchainFIMAAccount: '0x00cEB73c4577084C934eA579e7A8271778449008',
     listenPort: 8080,
-    parityUrl: "http://blockchain:8545",
+    parityUrl: 'http://blockchain:8545',
     websocketPort: 3000
 };
 

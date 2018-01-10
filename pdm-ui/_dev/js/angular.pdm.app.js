@@ -46,7 +46,7 @@ function resetStubs() {
 }
 
 function updateAuthorizationCount() {
-    var $http = angular.injector(["ng"]).get("$http");
+    var $http = angular.injector(['ng']).get('$http');
     $http.get('/api/v1/identity/' + getIdentityId() + '/authorizations').then(function(response) {
         var numAuth = response.data.authorizations.length;
         document.getElementById('authCount').innerHTML = numAuth;
@@ -54,21 +54,21 @@ function updateAuthorizationCount() {
 }
 
 function handleRequestCreated() {
-    getHttpClient().get("/api/v1/identity/" + getIdentityId() + "/requests").then(function(response) {
+    getHttpClient().get('/api/v1/identity/' + getIdentityId() + '/requests').then(function(response) {
         var requests = response.data.requests;
         var request = requests[0];
 
-        var message = request.askIdentity.description + " asks permission to receive the following information:<br><ul>";
+        var message = request.askIdentity.description + ' asks permission to receive the following information:<br><ul>';
 
         request.requestFields.forEach(function(field) {
-            message += "<li>" + field.field.caption + "</li>";
+            message += '<li>' + field.field.caption + '</li>';
         }, this);
 
-        message += "</ul>";
+        message += '</ul>';
 
         alertify
-            .okBtn("Accept")
-            .cancelBtn("Deny")
+            .okBtn('Accept')
+            .cancelBtn('Deny')
             .confirm(message, function (ev) {
                 confirmRequestAuthorization(request.requestId);
             });
@@ -82,5 +82,5 @@ function confirmRequestAuthorization(requestId) {
 }
 
 function getHttpClient() {
-    return angular.injector(["ng"]).get("$http");
+    return angular.injector(['ng']).get('$http');
 }

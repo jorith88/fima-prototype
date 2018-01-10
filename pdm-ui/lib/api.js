@@ -45,7 +45,7 @@ let API = module.exports = function(app, wsApp, web3, contractsRegistry) {
     // API: events websocket
     wsApp.ws('/api/v1/identity/:identityId/events', function(ws, req) {
         var identityId = req.params.identityId + '';
-        Console.log('New webservice connection for identity: ' + identityId);
+        console.log('New webservice connection for identity: ' + identityId);
         self.wsByIdentity[identityId] = ws;
     });
 
@@ -107,7 +107,7 @@ API.prototype.sendWebsocketMessage = function(identityId, message) {
     identityId += '';
 
     if (identityId in this.wsByIdentity) {
-        Console.log('Notifying identity ' + identityId + ' via WS');
+        console.log('Notifying identity ' + identityId + ' via WS');
         this.wsByIdentity[identityId].send(message);
     }
 };
