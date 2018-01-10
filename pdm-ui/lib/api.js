@@ -1,5 +1,7 @@
 let FIMA = require('./fima.js');
-const Console = require('console').Console;
+const btoa = require('btoa');
+const atob = require('atob');
+const Client = require('node-rest-client').Client;
 
 /**
  * PDM API endpoint implementations.
@@ -66,20 +68,26 @@ let API = module.exports = function(app, wsApp, web3, contractsRegistry) {
         var request = stubs.getRequestById(requestId);
         var response = stubs.confirmRequest(identityId, request.requestId);
 
-        // TODO: create subsnap
+        // TODO work in progress
+        const subsnap = {
+            foo: 'bar'
+        };
 
-        // Put the authorization on the blockchain
-        var identityAddress = '0x0067af5b87da32b14ff58af203cf3d4684319c5c';
-        var fima = new FIMA(identityAddress, web3);
-        var authContract = fima.getAuthorizationTrackerContract(contractsRegistry.authorizationTracker.address);
+        self.saveSubsnap(subsnap).then(subsnapID => {
+            // TODO Make account address configurable
+            var accountAddress = '0x0067af5b87da32b14ff58af203cf3d4684319c5c';
 
-        var granter = fima.numberToBytes32(identityId);
-        var grantee = fima.numberToBytes32(request.askIdentity.identityId);
-        var subsnapID = '0xabcd1234';
+            // Put the authorization on the blockchain
+            var fima = new FIMA(accountAddress, web3);
+            var authContract = fima.getAuthorizationTrackerContract(contractsRegistry.authorizationTracker.address);
 
-        authContract.authorize(granter, grantee, subsnapID);
+            var granter = fima.numberToBytes32(identityId);
+            var grantee = fima.numberToBytes32(request.askIdentity.identityId);
 
-        res.json(response);
+            authContract.authorize(granter, grantee, subsnapID);
+
+            res.json(response);
+        });
     });
 
     // API: create request for authorization
@@ -110,4 +118,25 @@ API.prototype.sendWebsocketMessage = function(identityId, message) {
         console.log('Notifying identity ' + identityId + ' via WS');
         this.wsByIdentity[identityId].send(message);
     }
+};
+
+API.prototype.saveSubsnap = function(data) {
+    return new Promise(function(resolve, reject) {
+        const client = new Client();
+
+        const requestArgs = {
+            data: {
+                data: btoa(JSON.stringify(data))
+            },
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+
+        client.post('http://datastore-api:8080/subsnap', requestArgs, function(data) {
+            resolve(data.subsnapID);
+        }).on('error', function (err) {
+            reject(err);
+        });
+    });
 };

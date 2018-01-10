@@ -1,5 +1,4 @@
 const fs = require('fs');
-const Console = require('Console').Console;
 
 /**
  * FIMA PDM library.
